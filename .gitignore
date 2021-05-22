@@ -6,7 +6,8 @@ out
 vojp/vojp_config.ini
 *.db
 .idea
-config.py
+pleepapier.txt
+reservelijst.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,17 +1,16 @@
 import telegram.ext
-import re
-
+from util import get_arguments, clean_input
 
 def krishan(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Krishan is een luie drol")
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Krishan is een luie drol')
 
 
 def rolf(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Rolf baft tarrelige anussen")
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Rolf baft tarrelige anussen')
 
 
 def steven(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Steven pijpt drollen")
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Steven pijpt drollen')
 
 
 def pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -60,7 +59,6 @@ def remove(update: telegram.Update, context: telegram.ext.CallbackContext):
             if '--reserve' in arguments or '-r' in arguments:
                 filename = 'reservelijst.txt'
         command = clean_input(command, arguments)
-        print(command)
         pleepapier_file = open(filename).readlines()
         removed_message += pleepapier_file.pop(int(command) - 1) + ' is eraf!'
         new_pleepapier_file = open(filename, mode='w')
@@ -75,18 +73,12 @@ def remove(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=removed_message)
 
 
-def get_arguments(command: str) -> set[str]:
-    args = set()
-    if '--' in command:
-        args |= set(re.findall(pattern='([-]{2}\\w*)', string=command))
-    if '-' in command:
-        args |= set(re.findall(pattern='(-{1}\\w{1}(?![\\w]))', string=command))
-    return args
-
-
-def clean_input(command: str, args: set[str]) -> str:
-    if command:
-        if args:
-            for arg in args:
-                command = command.replace(arg, '')
-        return command.strip().capitalize()
+function_description_dict = {
+        'krishan': 'Scheld Krishan uit',
+        'rolf': 'Scheld Rolf uit',
+        'steven': 'Scheld Steven uit',
+        'pleepapier': 'Print het pleepapier uit',
+        'reservelijst': 'Print de reservelijst uit',
+        'add': 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
+        'remove': 'Verwijder item van pleepapier, -r --reserve verwijderd van reservelijst'
+}

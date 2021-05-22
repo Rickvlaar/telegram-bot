@@ -20,7 +20,10 @@ def ready_bot():
     commands = []
     for command, func in getmembers(command_handlers, isfunction):
         updater.dispatcher.add_handler(CommandHandler(command=command, callback=func))
-        commands.append(BotCommand(command=command, description='test'))
+        description = command_handlers.function_description_dict.get(command)
+        if description is None:
+            description = 'skip'
+        commands.append(BotCommand(command=command, description=description))
 
     poep_bot.set_my_commands(commands=commands)
     updater.start_polling()

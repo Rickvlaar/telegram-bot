@@ -19,7 +19,7 @@ def ready_bot():
 
     commands = []
     for command, func in getmembers(command_handlers, isfunction):
-        updater.dispatcher.add_handler(CommandHandler(command, func))
+        updater.dispatcher.add_handler(CommandHandler(command=command, callback=func))
         commands.append(BotCommand(command=command, description='test'))
 
     poep_bot.set_my_commands(commands=commands)

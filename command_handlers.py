@@ -1,6 +1,7 @@
 import telegram.ext
 from util import get_arguments, clean_input
 
+
 def krishan(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text='Krishan is een luie drol')
 
@@ -11,6 +12,10 @@ def rolf(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 def steven(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text='Steven pijpt drollen')
+
+
+def rick(update: telegram.Update, context: telegram.ext.CallbackContext):
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Bedenkt zelf lekker iets')
 
 
 def pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -77,8 +82,9 @@ function_description_dict = {
         'krishan': 'Scheld Krishan uit',
         'rolf': 'Scheld Rolf uit',
         'steven': 'Scheld Steven uit',
+        'rick': 'Scheld Rick uit',
         'pleepapier': 'Print het pleepapier uit',
         'reservelijst': 'Print de reservelijst uit',
         'add': 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
-        'remove': 'Verwijder item van pleepapier, -r --reserve verwijderd van reservelijst'
+        'remove': 'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst'
 }

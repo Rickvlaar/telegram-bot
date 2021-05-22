@@ -1,1 +1,1 @@
-web: python -m main;
+worker: python -m main;

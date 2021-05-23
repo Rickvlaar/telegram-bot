@@ -1,23 +1,23 @@
 import telegram.ext
 import logging
-from util import process_input
-from data_model import ItemList, Item, db_session
+from util import process_input, get_random_insult
+from data_model import ItemList, Item, db_session, Insult
 
 
 def krishan(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Krishan is een luie drol')
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Krishan'))
 
 
 def rolf(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Rolf baft tarrelige anussen')
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Rolf'))
 
 
 def steven(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Steven pijpt drollen')
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Steven'))
 
 
 def rick(update: telegram.Update, context: telegram.ext.CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Bedenkt zelf lekker iets')
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Rick'))
 
 
 def new(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -150,6 +150,22 @@ def move(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=moved_message)
 
 
+def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
+    added_message = ''
+    try:
+        command, args = process_input(update.message.text)
+        session = db_session()
+        item = Insult(insult=command, created_by=update.effective_user.first_name)
+        session.add(item)
+        session.commit()
+        session.close()
+        added_message += 'Goede! Staat erin'
+    except ValueError:
+        added_message += 'Pffffff..... sukkel'
+        pass
+    context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
+
+
 function_description_dict = {
         'krishan'     : 'Scheld Krishan uit',
         'rolf'        : 'Scheld Rolf uit',
@@ -160,5 +176,6 @@ function_description_dict = {
         'add'         : 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
         'remove'      : 'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
         'move'        : 'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
-        'new'         : 'Maak een nieuw papiertje aan'
+        'new'         : 'Maak een nieuw papiertje aan',
+        'insult'       : 'Voeg een nieuwe belediging toe aan de database'
 }

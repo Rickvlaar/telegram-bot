@@ -1,6 +1,6 @@
 import re
-from data_model import Base, engine
-
+from data_model import Base, engine, db_session, Insult
+from sqlalchemy.sql.functions import random
 
 def get_arguments(command: str) -> set[str]:
     args = set()
@@ -49,3 +49,9 @@ def create_data_model():
 def drop_all_tables(confirmed):
     if confirmed:
         Base.metadata.drop_all(bind=engine)
+
+
+def get_random_insult(victim: str) -> str:
+    session = db_session()
+    insult = session.query(Insult).order_by(random()).first().insult
+    return victim + ' ' + insult

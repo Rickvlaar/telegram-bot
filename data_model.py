@@ -47,3 +47,21 @@ class Item(Base):
 
     def attributes(self):
         return {key: value for key, value in self.__dict__.items() if key[0] != '_'}
+
+
+class Insult(Base):
+    __tablename__ = 'Insult'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    insult = Column(String, index=True, unique=True)
+    created_by = Column(String)
+    created_date = Column(DateTime, default=datetime.utcnow())
+
+    def __repr__(self):
+        return self.attributes()
+
+    def __str__(self):
+        return str(self.attributes())
+
+    def attributes(self):
+        return {key: value for key, value in self.__dict__.items() if key[0] != '_'}

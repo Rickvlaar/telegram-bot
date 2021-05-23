@@ -15,7 +15,7 @@ def process_input(command: str) -> (str, set[str]):
     if not command:
         raise ValueError('Command is required')
 
-    command = re.sub(pattern='([/]\\w*)', repl='', string=command, count=1)
+    command = re.sub(pattern='([/!]\\w+)', repl='', string=command, count=1)
     args = get_arguments(command)
     if args:
         for arg in args:

@@ -7,3 +7,4 @@ six==1.16.0
 SQLAlchemy==1.4.15
 tornado==6.1
 tzlocal==2.1
+psycopg2==2.8.6

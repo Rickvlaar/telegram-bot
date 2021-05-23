@@ -6,7 +6,7 @@ from datetime import datetime
 from config import Config
 
 
-engine = create_engine(Config.DATABASE_URI)
+engine = create_engine(Config.DATABASE_URL)
 db_session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()
 

@@ -1,6 +1,7 @@
 import re
 from data_model import Base, engine
 
+
 def get_arguments(command: str) -> set[str]:
     args = set()
     if '--' in command:
@@ -10,12 +11,24 @@ def get_arguments(command: str) -> set[str]:
     return args
 
 
-def clean_input(command: str, args: set[str] = None) -> str:
-    if command:
-        if args:
-            for arg in args:
-                command = command.replace(arg, '')
-        return command.strip().capitalize()
+def process_input(command: str) -> (str, set[str]):
+    if not command:
+        raise ValueError('Command is required')
+
+    command = re.sub(pattern='([/]\\w*)', repl='', string=command, count=1)
+    args = get_arguments(command)
+    if args:
+        for arg in args:
+            command = command.replace(arg, '')
+
+    validate_input(command)
+    value = command.strip().capitalize()
+    return value, args
+
+
+def validate_input(command: str) -> None:
+    if command is None or len(command) == 0:
+        raise ValueError('No input given')
 
 
 def check_data_model():

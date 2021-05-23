@@ -54,4 +54,5 @@ def drop_all_tables(confirmed):
 def get_random_insult(victim: str) -> str:
     session = db_session()
     insult = session.query(Insult).order_by(random()).first().insult
-    return victim + ' ' + insult
+    insult = victim + ' ' + insult
+    return insult.lower()

@@ -1,5 +1,5 @@
 from telegram import BotCommand, Bot
-from telegram.ext import Updater, CommandHandler, Defaults
+from telegram.ext import Updater, CommandHandler, Defaults, PrefixHandler
 from telegram.utils.request import Request
 from config import Config, ready_env
 from inspect import getmembers, isfunction
@@ -27,6 +27,7 @@ def ready_bot():
     for command, func in getmembers(command_handlers, isfunction):
         if command in command_handlers.function_description_dict.keys():
             updater.dispatcher.add_handler(CommandHandler(command=command, callback=func))
+            updater.dispatcher.add_handler(PrefixHandler('!', command=command, callback=func))
             description = command_handlers.function_description_dict.get(command)
             commands.append(BotCommand(command=command, description=description))
 

@@ -1,6 +1,5 @@
 import re
-import telegram
-from data_model import Base, engine, db_session, Insult, Item
+from data_model import Base, engine, db_session, Insult
 from sqlalchemy.sql.functions import random
 
 
@@ -13,7 +12,7 @@ def get_arguments(command: str) -> set[str]:
     return args
 
 
-def process_input(command: str) -> (str, set[str]):
+def process_input(command: str) -> (list[str], set[str]):
     if not command:
         raise ValueError('Command is required')
 
@@ -24,8 +23,12 @@ def process_input(command: str) -> (str, set[str]):
             command = command.replace(arg, '')
 
     validate_input(command)
-    value = command.strip()
-    return value, args
+
+    input_values = command.strip()
+    if ',' in command:
+        input_values = [val.strip() for val in command.split(',')]
+
+    return input_values, args
 
 
 def validate_input(command: str) -> None:
@@ -53,17 +56,19 @@ def drop_all_tables(confirmed):
         Base.metadata.drop_all(bind=engine)
 
 
-def upsert_record(record: object) -> None:
+def upsert_records(records: list[object]) -> None:
     session = db_session(expire_on_commit=False)
-    session.add(record)
+    for record in records:
+        session.add(record)
     session.commit()
     session.expunge_all()
     session.close()
 
 
-def delete_record(record: object) -> None:
+def delete_records(records: list[object]) -> None:
     session = db_session()
-    session.delete(record)
+    for record in records:
+        session.delete(record)
     session.commit()
     session.close()
 
@@ -72,4 +77,4 @@ def get_random_insult(victim: str) -> str:
     session = db_session()
     insult = session.query(Insult).order_by(random()).first().insult
     insult = victim + ' ' + insult
-    return insult.lower()
+    return insult.capitalize()

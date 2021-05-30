@@ -1,7 +1,7 @@
 import telegram.ext
 import logging
 from telegram import ForceReply
-from util import process_input, get_random_insult, upsert_record
+from util import process_input, get_random_insult, upsert_records
 from command_helpers import add_item, move_item, remove_item
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session, Insult
@@ -104,7 +104,7 @@ def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     try:
         command, args = process_input(update.message.text)
         item = Insult(insult=command, created_by=update.effective_user.first_name)
-        upsert_record(item)
+        upsert_records([item])
         added_message += 'Goede! Staat erin'
     except ValueError:
         added_message += 'Pffffff..... sukkel'

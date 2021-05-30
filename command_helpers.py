@@ -1,6 +1,6 @@
 import telegram.ext
 from util import upsert_records, process_input, delete_records
-from data_model import Item, db_session
+from data_model import Item, Insult, db_session
 
 
 def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -43,6 +43,17 @@ def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
         moved_message = '"' + item.item_name + '" staat nu op ' + item.item_list
         context.bot.send_message(chat_id=update.effective_chat.id, text=moved_message)
     upsert_records(items)
+
+
+def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
+    commands, args = process_input(update.message.text)
+    items = []
+    for command in commands:
+        item = Insult(insult=command, created_by=update.effective_user.first_name)
+        items.append(item)
+    upsert_records(items)
+    added_message = 'Goede! Staat erin'
+    context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
 
 
 def query_item(command: str, args: set[str]) -> Item:

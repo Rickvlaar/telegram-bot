@@ -1,8 +1,8 @@
 import telegram.ext
 import logging
 from telegram import ForceReply
-from util import process_input, get_random_insult, upsert_records
-from command_helpers import add_item, move_item, remove_item
+from util import process_input, get_random_insult
+from command_helpers import add_item, move_item, remove_item, add_insult
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session, Insult
 
@@ -100,15 +100,10 @@ def move(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 
 def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
-    added_message = ''
     try:
-        command, args = process_input(update.message.text)
-        item = Insult(insult=command, created_by=update.effective_user.first_name)
-        upsert_records([item])
-        added_message += 'Goede! Staat erin'
+        add_insult(update, context)
     except ValueError:
-        added_message += 'Pffffff..... sukkel'
-    context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Pffffff..... sukkel')
 
 
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):

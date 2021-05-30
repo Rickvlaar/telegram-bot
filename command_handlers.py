@@ -120,7 +120,7 @@ function_description_dict = {
         'rolf'        : 'Scheld Rolf uit',
         'steven'      : 'Scheld Steven uit',
         'rick'        : 'Scheld Rick uit',
-        'luuk'        : 'Scheld Rick uit',
+        'luuk'        : 'Scheld Luuk uit',
         'pleepapier'  : 'Print het pleepapier uit',
         'reservelijst': 'Print de reservelijst uit',
         'add'         : 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',

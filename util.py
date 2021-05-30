@@ -24,9 +24,11 @@ def process_input(command: str) -> (list[str], set[str]):
 
     validate_input(command)
 
-    input_values = command.strip()
+    command = command.strip()
     if ',' in command:
         input_values = [val.strip() for val in command.split(',')]
+    else:
+        input_values = [command]
 
     return input_values, args
 

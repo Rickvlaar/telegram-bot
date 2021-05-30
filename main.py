@@ -1,9 +1,7 @@
 from telegram import BotCommand, Bot
 from telegram.ext import Updater, CommandHandler, Defaults, PrefixHandler
 from telegram.utils.request import Request
-from config import Config, ready_env
-from inspect import getmembers, isfunction
-import util
+from config import Config
 import logging
 import command_handlers
 import conversation_handlers
@@ -13,11 +11,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 
 def ready_bot():
-    ready_env()
-    if not util.check_data_model():
-        util.drop_all_tables(True)
-        util.create_data_model()
-
     defaults = Defaults(run_async=True)
     request = Request(con_pool_size=8)
     poep_bot = Bot(token=Config.AUTH_TOKEN, defaults=defaults, request=request)

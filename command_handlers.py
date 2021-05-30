@@ -114,6 +114,7 @@ def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):
     no_input_message = 'Wat dan lullo?'
     context.bot.send_message(chat_id=update.effective_chat.id,
+                             reply_to_message_id=update.message.message_id,
                              text=no_input_message,
                              reply_markup=ForceReply(selective=True))
     return conversation_state

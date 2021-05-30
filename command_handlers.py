@@ -1,6 +1,9 @@
 import telegram.ext
 import logging
-from util import process_input, get_random_insult
+from telegram import ForceReply
+from util import process_input, get_random_insult, upsert_record
+from command_helpers import add_item, move_item, remove_item
+from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session, Insult
 
 
@@ -18,6 +21,10 @@ def steven(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 def rick(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Rick'))
+
+
+def luuk(update: telegram.Update, context: telegram.ext.CallbackContext):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult('Luuk'))
 
 
 def new(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -64,106 +71,52 @@ def reservelijst(update: telegram.Update, context: telegram.ext.CallbackContext)
 
 
 def add(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name = 'Pleepapier'
-    added_message = ''
     try:
-        item_to_add, args = process_input(update.message.text)
-        if args:
-            if '--reserve' in args or '-r' in args:
-                list_name = 'Reservelijst'
-        session = db_session()
-        item = Item(item_name=item_to_add, item_list=list_name, created_by=update.effective_user.first_name)
-        session.add(item)
-        session.commit()
-        session.close()
-        added_message += '"' + item_to_add + '"' + ' staat erop!'
+        add_item(update, context)
     except ValueError:
-        added_message = 'retard...'
-        pass
-    context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
+        return request_missing_input(update, context, ConversationStates.ADD_INPUT_MISSING)
 
 
-def remove(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name = 'Pleepapier'
-    removed_message = ''
+def rm(update: telegram.Update, context: telegram.ext.CallbackContext):
     try:
-        command, args = process_input(update.message.text)
-        if args:
-            if '--reserve' in args or '-r' in args:
-                list_name = 'Reservelijst'
-        session = db_session()
-        if command.isdigit():
-            remove_index = int(command) - 1
-            item = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()[remove_index]
-        else:
-            item = session.query(Item).filter(Item.item_list == list_name, Item.item_name == command).first()
-        if not item:
-            raise ValueError
-        session.delete(item)
-        session.commit()
-        session.close()
-        removed_message += '"' + item.item_name + '" is eraf!'
+        remove_item(update, context)
     except (AttributeError, TypeError) as e:
         logging.exception(e)
-        removed_message += 'Ben je dom ofzo?'
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Ben je dom ofzo?')
         pass
-    except IndexError:
-        removed_message += 'Dit nummer staat niet op de lijst mongol'
-        pass
-    except ValueError:
-        removed_message += 'Dit item staat niet op de lijst mongol'
-        pass
-    context.bot.send_message(chat_id=update.effective_chat.id, text=removed_message)
+    except (ValueError, IndexError):
+        return request_missing_input(update, context, ConversationStates.RM_INPUT_MISSING)
 
 
 def move(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name = 'Pleepapier'
-    moved_message = ''
     try:
-        command, args = process_input(update.message.text)
-        session = db_session()
-        if args:
-            if '--reserve' in args or '-r' in args:
-                list_name = 'Reservelijst'
-        if command.isdigit():
-            move_index = int(command) - 1
-            item = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()[move_index]
-        else:
-            item = session.query(Item).filter(Item.item_list == list_name, Item.item_name == command).first()
-        if not item:
-            raise ValueError
-        item.item_list = 'Pleepapier' if item.item_list == 'Reservelijst' else 'Reservelijst'
-        moved_message = '"' + item.item_name + '" staat nu op ' + item.item_list
-        session.add(item)
-        session.commit()
-        session.close()
+        move_item(update, context)
     except (AttributeError, TypeError) as e:
         logging.exception(e)
-        moved_message += 'Ben je dom ofzo?'
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Ben je dom ofzo?')
         pass
-    except IndexError:
-        moved_message += 'Dit nummer staat niet op de lijst mongol'
-        pass
-    except ValueError:
-        moved_message += 'Dit item staat niet op de lijst mongol'
-        pass
-    context.bot.send_message(chat_id=update.effective_chat.id, text=moved_message)
+    except (ValueError, IndexError):
+        return request_missing_input(update, context, ConversationStates.MOVE_INPUT_MISSING)
 
 
 def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     added_message = ''
     try:
         command, args = process_input(update.message.text)
-        session = db_session()
         item = Insult(insult=command, created_by=update.effective_user.first_name)
-        session.add(item)
-        session.commit()
-        session.close()
+        upsert_record(item)
         added_message += 'Goede! Staat erin'
     except ValueError:
         added_message += 'Pffffff..... sukkel'
-        pass
     context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
+
+
+def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):
+    no_input_message = 'Wat dan lullo?'
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text=no_input_message,
+                             reply_markup=ForceReply(selective=True))
+    return conversation_state
 
 
 function_description_dict = {
@@ -171,11 +124,30 @@ function_description_dict = {
         'rolf'        : 'Scheld Rolf uit',
         'steven'      : 'Scheld Steven uit',
         'rick'        : 'Scheld Rick uit',
+        'luuk'        : 'Scheld Rick uit',
         'pleepapier'  : 'Print het pleepapier uit',
         'reservelijst': 'Print de reservelijst uit',
         'add'         : 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
-        'remove'      : 'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
+        'rm'          : 'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
         'move'        : 'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
         'new'         : 'Maak een nieuw papiertje aan',
-        'insult'       : 'Voeg een nieuwe belediging toe aan de database'
+        'insult'      : 'Voeg een nieuwe belediging toe aan de database'
 }
+
+no_param_handlers = [
+        krishan,
+        rolf,
+        steven,
+        rick,
+        luuk,
+        pleepapier,
+        reservelijst
+]
+
+input_handlers = [
+        add,
+        rm,
+        move,
+        new,
+        insult
+]

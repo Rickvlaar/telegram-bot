@@ -6,7 +6,7 @@ from inspect import getmembers, isfunction
 import util
 import logging
 import command_handlers
-
+import conversation_handlers
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -24,13 +24,15 @@ def ready_bot():
     updater = Updater(bot=poep_bot, use_context=True)
 
     commands = []
-    for command, func in getmembers(command_handlers, isfunction):
-        if command in command_handlers.function_description_dict.keys():
-            updater.dispatcher.add_handler(CommandHandler(command=command, callback=func))
-            updater.dispatcher.add_handler(PrefixHandler('!', command=command, callback=func))
-            description = command_handlers.function_description_dict.get(command)
-            commands.append(BotCommand(command=command, description=description))
+    for command in command_handlers.no_param_handlers:
+        this_chandler = CommandHandler(command=command.__name__, callback=command)
+        this_prhandler = PrefixHandler('!', command=command.__name__, callback=command)
+        updater.dispatcher.add_handler(this_prhandler)
+        updater.dispatcher.add_handler(this_chandler)
+        description = command_handlers.function_description_dict.get(command.__name__)
+        commands.append(BotCommand(command=command.__name__, description=description))
 
+    updater.dispatcher.add_handler(conversation_handlers.input_conversation_handler())
     poep_bot.set_my_commands(commands=commands)
     updater.start_polling()
 

@@ -1,6 +1,8 @@
 import re
-from data_model import Base, engine, db_session, Insult
+import telegram
+from data_model import Base, engine, db_session, Insult, Item
 from sqlalchemy.sql.functions import random
+
 
 def get_arguments(command: str) -> set[str]:
     args = set()
@@ -22,7 +24,7 @@ def process_input(command: str) -> (str, set[str]):
             command = command.replace(arg, '')
 
     validate_input(command)
-    value = command.strip().capitalize()
+    value = command.strip()
     return value, args
 
 
@@ -49,6 +51,21 @@ def create_data_model():
 def drop_all_tables(confirmed):
     if confirmed:
         Base.metadata.drop_all(bind=engine)
+
+
+def upsert_record(record: object) -> None:
+    session = db_session(expire_on_commit=False)
+    session.add(record)
+    session.commit()
+    session.expunge_all()
+    session.close()
+
+
+def delete_record(record: object) -> None:
+    session = db_session()
+    session.delete(record)
+    session.commit()
+    session.close()
 
 
 def get_random_insult(victim: str) -> str:

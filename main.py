@@ -34,8 +34,12 @@ def ready_hhpc_bot():
     for name in insultees:
         updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.send_insult))
         updater.dispatcher.add_handler(PrefixHandler('!', command=name, callback=command_handlers.send_insult))
+        updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.insult))
+        updater.dispatcher.add_handler(PrefixHandler('!', command=name, callback=command_handlers.insult()))
 
     hhpc_bot.commands.append(BotCommand(command='{{voornaam}}', description='Beledig iemand; !{{voornaam}} werkt ook; ex: "/Adolf", "!Adolf"'))
+    hhpc_bot.commands.append(BotCommand(command='insult', description='Voeg een nieuwe belediging toe aan de database'))
+
     updater.start_polling()
 
 

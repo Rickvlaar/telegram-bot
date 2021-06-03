@@ -33,6 +33,11 @@ def process_input(command: str) -> (list[str], set[str]):
     return input_values, args
 
 
+def get_insultee_name(command: str):
+    match = re.match(pattern='[/!](\\w+)', string=command)
+    return match.group(1)
+
+
 def validate_input(command: str) -> None:
     if command is None or len(command) == 0:
         raise ValueError('No input given')

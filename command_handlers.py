@@ -1,10 +1,15 @@
 import telegram.ext
 import logging
 from telegram import ForceReply
-from util import process_input, get_random_insult
+from util import process_input, get_random_insult, get_insultee_name
 from command_helpers import add_item, move_item, remove_item, add_insult
 from conversation_handlers import ConversationStates
-from data_model import ItemList, Item, db_session, Insult
+from data_model import ItemList, Item, db_session
+
+
+def send_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
+    name = get_insultee_name(update.message.text)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_random_insult(name))
 
 
 def krishan(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -116,18 +121,18 @@ def request_missing_input(update: telegram.Update, context: telegram.ext.Callbac
 
 
 function_description_dict = {
-        'krishan'     : 'Scheld Krishan uit',
-        'rolf'        : 'Scheld Rolf uit',
-        'steven'      : 'Scheld Steven uit',
-        'rick'        : 'Scheld Rick uit',
-        'luuk'        : 'Scheld Luuk uit',
-        'pleepapier'  : 'Print het pleepapier uit',
+        'krishan':      'Scheld Krishan uit',
+        'rolf':         'Scheld Rolf uit',
+        'steven':       'Scheld Steven uit',
+        'rick':         'Scheld Rick uit',
+        'luuk':         'Scheld Luuk uit',
+        'pleepapier':   'Print het pleepapier uit',
         'reservelijst': 'Print de reservelijst uit',
-        'add'         : 'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
-        'rm'          : 'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
-        'move'        : 'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
-        'new'         : 'Maak een nieuw papiertje aan',
-        'insult'      : 'Voeg een nieuwe belediging toe aan de database'
+        'add':          'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
+        'rm':           'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
+        'move':         'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
+        'new':          'Maak een nieuw papiertje aan',
+        'insult':       'Voeg een nieuwe belediging toe aan de database'
 }
 
 no_param_handlers = [

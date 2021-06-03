@@ -1,6 +1,5 @@
 from telegram import BotCommand, Bot
-from telegram.ext import Updater, CommandHandler, Defaults, PrefixHandler
-from telegram.utils.request import Request
+from telegram.ext import Updater, CommandHandler, PrefixHandler
 from config import Config
 import logging
 import command_handlers
@@ -9,11 +8,8 @@ import conversation_handlers
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-
-def ready_bot():
-    defaults = Defaults(run_async=True)
-    request = Request(con_pool_size=8)
-    poep_bot = Bot(token=Config.AUTH_TOKEN, defaults=defaults, request=request)
+def ready_poepbot():
+    poep_bot = Bot(token=Config.AUTH_TOKEN, defaults=Config.DEFAULTS, request=Config.REQUEST)
     updater = Updater(bot=poep_bot, use_context=True)
 
     commands = []
@@ -30,4 +26,22 @@ def ready_bot():
     updater.start_polling()
 
 
-ready_bot()
+def ready_hhpc_bot():
+    hhpc_bot = Bot(token=Config.HHPC_TOKEN, defaults=Config.DEFAULTS, request=Config.REQUEST)
+    updater = Updater(bot=hhpc_bot, use_context=True)
+
+    insultees = [member.strip() for member in Config.MEMBERS.split(',')]
+    for name in insultees:
+        updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.send_insult))
+        updater.dispatcher.add_handler(PrefixHandler('!', command=name, callback=command_handlers.send_insult))
+
+    hhpc_bot.commands.append(BotCommand(command='{{voornaam}}', description='Beledig iemand; !{{voornaam}} werkt ook; ex: "/Adolf", "!Adolf"'))
+    updater.start_polling()
+
+
+def ready_bots():
+    ready_poepbot()
+    ready_hhpc_bot()
+
+
+ready_bots()

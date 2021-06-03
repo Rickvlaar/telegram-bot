@@ -8,6 +8,7 @@ import conversation_handlers
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
+
 def ready_poepbot():
     poep_bot = Bot(token=Config.AUTH_TOKEN, defaults=Config.DEFAULTS, request=Config.REQUEST)
     updater = Updater(bot=poep_bot, use_context=True)
@@ -37,8 +38,10 @@ def ready_hhpc_bot():
         updater.dispatcher.add_handler(CommandHandler(command='insult', callback=command_handlers.insult))
         updater.dispatcher.add_handler(PrefixHandler('!', command='insult', callback=command_handlers.insult))
 
-    hhpc_bot.commands.append(BotCommand(command='{{voornaam}}', description='Beledig iemand; !{{voornaam}} werkt ook; ex: "/Adolf", "!Adolf"'))
-    hhpc_bot.commands.append(BotCommand(command='insult', description='Voeg een nieuwe belediging toe aan de database'))
+    commands = []
+    commands.append(BotCommand(command='voornaam', description='Beledig iemand, bv: /Adolf '))
+    commands.append(BotCommand(command='insult', description='Voeg een nieuwe belediging toe aan de database'))
+    hhpc_bot.set_my_commands(commands=commands)
 
     updater.start_polling()
 

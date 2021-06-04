@@ -48,7 +48,13 @@ def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
 def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     commands, args = process_input(update.message.text)
     items = []
+    if len(commands) > 3:
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Beetje te veel van het goede gozert')
+        return
     for command in commands:
+        if len(command) > 140:
+            context.bot.send_message(chat_id=update.effective_chat.id, text='Jezus lulijzer, hier gelden gewoon twitter regels: max 140 tekens')
+            return
         item = Insult(insult=command, created_by=update.effective_user.first_name)
         items.append(item)
     upsert_records(items)

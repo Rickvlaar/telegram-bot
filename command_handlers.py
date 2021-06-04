@@ -108,7 +108,8 @@ def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     try:
         add_insult(update, context)
     except ValueError:
-        context.bot.send_message(chat_id=update.effective_chat.id, text='Pffffff..... sukkel')
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Wel wat invullen he....')
+        # return request_missing_input(update, context, ConversationStates.INSULT_INPUT_MISSING)
 
 
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):

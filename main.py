@@ -24,7 +24,8 @@ def ready_poepbot():
 
     updater.dispatcher.add_handler(conversation_handlers.input_conversation_handler())
     poep_bot.set_my_commands(commands=commands)
-    # updater.start_polling()
+
+    updater.start_polling()
 
 
 def ready_hhpc_bot():

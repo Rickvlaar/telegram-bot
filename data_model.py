@@ -5,7 +5,6 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from datetime import datetime
 from config import Config
 
-
 engine = create_engine(Config.DATABASE_URL)
 db_session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()
@@ -54,6 +53,26 @@ class Insult(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     insult = Column(String, index=True, unique=True)
+    created_by = Column(String)
+    created_date = Column(DateTime, default=datetime.utcnow())
+
+    def __repr__(self):
+        return self.attributes()
+
+    def __str__(self):
+        return str(self.attributes())
+
+    def attributes(self):
+        return {key: value for key, value in self.__dict__.items() if key[0] != '_'}
+
+
+class Kratjes(Base):
+    __tablename__ = 'Kratjes'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bet_description = Column(String)
+    stake = Column(String)
+    due_date = Column(DateTime)
     created_by = Column(String)
     created_date = Column(DateTime, default=datetime.utcnow())
 

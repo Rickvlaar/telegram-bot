@@ -2,7 +2,7 @@ import telegram.ext
 import logging
 from telegram import ForceReply
 from util import process_input, get_random_insult, get_insultee_name
-from command_helpers import add_item, move_item, remove_item, add_insult
+from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session
 
@@ -109,7 +109,15 @@ def insult(update: telegram.Update, context: telegram.ext.CallbackContext):
         add_insult(update, context)
     except ValueError:
         context.bot.send_message(chat_id=update.effective_chat.id, text='Wel wat invullen he....')
-        # return request_missing_input(update, context, ConversationStates.INSULT_INPUT_MISSING)
+        # return request_missing_input(update, context, ConversationSt/ates.INSULT_INPUT_MISSING)
+
+
+def kratjes(update: telegram.Update, context: telegram.ext.CallbackContext):
+    try:
+        get_kratjes(update, context)
+    except ValueError as e:
+        logging.exception(e)
+        pass
 
 
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):

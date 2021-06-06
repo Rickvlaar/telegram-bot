@@ -1,6 +1,7 @@
 from telegram import BotCommand, Bot
 from telegram.ext import Updater, CommandHandler, PrefixHandler
 from config import Config
+from datetime import datetime
 import logging
 import command_handlers
 import conversation_handlers
@@ -35,13 +36,15 @@ def ready_hhpc_bot():
     insultees = [member.strip() for member in Config.MEMBERS.split(',')]
     for name in insultees:
         updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.send_insult))
-        updater.dispatcher.add_handler(PrefixHandler('!', command=name, callback=command_handlers.send_insult))
         updater.dispatcher.add_handler(CommandHandler(command='insult', callback=command_handlers.insult))
-        updater.dispatcher.add_handler(PrefixHandler('!', command='insult', callback=command_handlers.insult))
+        updater.dispatcher.add_handler(CommandHandler(command='kratjes', callback=command_handlers.kratjes))
 
     commands = []
     commands.append(BotCommand(command='voornaam', description='Beledig iemand, bv: /Adolf '))
     commands.append(BotCommand(command='insult', description='Voeg een nieuwe belediging toe aan de database'))
+    commands.append(BotCommand(command='kratjes', description='Overzicht van alle onzinnige weddenschappen'))
+
+    updater.dispatcher.add_handler(conversation_handlers.input_conversation_handler())
     hhpc_bot.set_my_commands(commands=commands)
 
     updater.start_polling()

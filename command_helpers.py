@@ -1,6 +1,7 @@
 import telegram.ext
 from util import upsert_records, process_input, delete_records
-from data_model import Item, Insult, db_session
+from data_model import Item, Insult, Kratjes, db_session
+from datetime import datetime
 
 
 def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -60,6 +61,23 @@ def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     upsert_records(items)
     added_message = 'Goede! Staat erin'
     context.bot.send_message(chat_id=update.effective_chat.id, text=added_message)
+
+
+def get_kratjes(update: telegram.Update, context: telegram.ext.CallbackContext):
+    session = db_session()
+    kratjes = session.query(Kratjes).order_by(Kratjes.created_date).all()
+    message_text = 'Rick stelt dat:\n'
+    for bet in kratjes:
+        bet.due_date = bet.due_date.strftime('%d-%m-%Y') if bet.due_date else 'het einde van dit leven'
+        message_text += '"{1}" voor "{2}" met "{0}" als onderpand\n'.format(
+                bet.stake, bet.bet_description, bet.due_date)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message_text)
+    session.close()
+
+
+def adje_kratje(bet_description: str, stake: str, due_date: datetime = None):
+    kratje = Kratjes(bet_description=bet_description, stake=stake, due_date=due_date)
+    upsert_records([kratje])
 
 
 def query_item(command: str, args: set[str]) -> Item:

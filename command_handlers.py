@@ -2,7 +2,7 @@ import telegram.ext
 import logging
 from telegram import ForceReply
 from util import process_input, get_random_insult, get_insultee_name
-from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes
+from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session
 
@@ -33,7 +33,8 @@ def luuk(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 
 def new(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name, args = process_input(update.message.text)
+    command = process_input(update.message.text)
+    list_name = command.value
     response = ''
     try:
         session = db_session()
@@ -120,6 +121,22 @@ def kratjes(update: telegram.Update, context: telegram.ext.CallbackContext):
         pass
 
 
+def adje_kratje(update: telegram.Update, context: telegram.ext.CallbackContext):
+    try:
+        add_bet(update, context)
+    except ValueError as e:
+        logging.exception(e)
+        pass
+
+
+def volgende(update: telegram.Update, context: telegram.ext.CallbackContext):
+    try:
+        set_next_episode(update=update, context=context)
+    except ValueError as e:
+        logging.exception(e)
+        pass
+
+
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):
     no_input_message = 'Wat dan lullo?'
     context.bot.send_message(chat_id=update.effective_chat.id,
@@ -159,5 +176,6 @@ input_handlers = [
         rm,
         move,
         new,
-        insult
+        insult,
+        volgende
 ]

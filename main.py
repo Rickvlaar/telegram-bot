@@ -37,6 +37,7 @@ def ready_hhpc_bot():
     for name in insultees:
         updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.send_insult))
         updater.dispatcher.add_handler(CommandHandler(command='insult', callback=command_handlers.insult))
+        updater.dispatcher.add_handler(CommandHandler(command='adjekratje', callback=command_handlers.adje_kratje))
         updater.dispatcher.add_handler(CommandHandler(command='kratjes', callback=command_handlers.kratjes))
 
     commands = []

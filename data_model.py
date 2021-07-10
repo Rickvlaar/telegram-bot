@@ -16,6 +16,7 @@ class ItemList(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     list_name = Column(String, index=True, unique=True)
     items = relationship('Item', backref='list_items', lazy=True)
+    episode_date = Column(DateTime)
     created_by = Column(String)
     created_date = Column(DateTime, default=datetime.utcnow())
 
@@ -70,6 +71,7 @@ class Kratjes(Base):
     __tablename__ = 'Kratjes'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    better = Column(String)
     bet_description = Column(String)
     stake = Column(String)
     due_date = Column(DateTime)

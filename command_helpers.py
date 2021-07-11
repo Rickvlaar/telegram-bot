@@ -73,7 +73,7 @@ def get_kratjes(update: telegram.Update, context: telegram.ext.CallbackContext):
     kratjes = session.query(Kratjes).order_by(Kratjes.created_date).all()
     message_text = ''
     for bet in kratjes:
-        message_text += f'{bet.better} stelt dat: '
+        message_text += f'{bet.better} stelt: '
         bet.due_date = bet.due_date.strftime('%d-%m-%Y') if bet.due_date else 'het einde van dit leven'
         message_text += '"{1}" voor "{2}" met "{0}" als onderpand\n\n'.format(
                 bet.stake, bet.bet_description, bet.due_date)

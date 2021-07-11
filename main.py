@@ -44,6 +44,8 @@ def ready_hhpc_bot():
     commands.append(BotCommand(command='voornaam', description='Beledig iemand, bv: /Adolf '))
     commands.append(BotCommand(command='insult', description='Voeg een nieuwe belediging toe aan de database'))
     commands.append(BotCommand(command='kratjes', description='Overzicht van alle onzinnige weddenschappen'))
+    commands.append(BotCommand(command='adjekratje', description='Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd"\n'
+                        'voorbeeld: /adjekratje rutte liegt 100 keer -b henk -s 1 kratje -d 2020-01-01'))
 
     updater.dispatcher.add_handler(conversation_handlers.input_conversation_handler())
     hhpc_bot.set_my_commands(commands=commands)

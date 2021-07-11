@@ -158,7 +158,9 @@ function_description_dict = {
         'rm':           'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
         'move':         'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
         'new':          'Maak een nieuw papiertje aan',
-        'insult':       'Voeg een nieuwe belediging toe aan de database'
+        'insult':       'Voeg een nieuwe belediging toe aan de database',
+        'adjekratje':   'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd"\n'
+                        'voorbeeld: /adjekratje rutte liegt 100 keer -b henk -s 1 kratje -d 2020-01-01'
 }
 
 no_param_handlers = [

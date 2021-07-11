@@ -126,7 +126,7 @@ def adje_kratje(update: telegram.Update, context: telegram.ext.CallbackContext):
         add_bet(update, context)
     except ValueError as e:
         logging.exception(e)
-        error_message = 'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd"\n ' \
+        error_message = 'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd" ' \
                         'voorbeeld: /adjekratje rutte liegt 100 keer -b henk -s 1 kratje -d 2020-01-01'
         context.bot.send_message(chat_id=update.effective_chat.id, text=error_message)
         pass
@@ -162,7 +162,7 @@ function_description_dict = {
         'move':         'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
         'new':          'Maak een nieuw papiertje aan',
         'insult':       'Voeg een nieuwe belediging toe aan de database',
-        'adjekratje':   'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd"\n' \
+        'adjekratje':   'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd" ' \
                         'voorbeeld: /adjekratje rutte liegt 100 keer -b henk -s 1 kratje -d 2020-01-01'
 }
 

@@ -96,6 +96,9 @@ def add_bet(update: telegram.Update, context: telegram.ext.CallbackContext):
     kratje = Kratjes(better=better.value, bet_description=bet_description, stake=stake.value, due_date=due_date)
     upsert_records([kratje])
 
+    message_text = 'De weddenschap is vastgelegd!'
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message_text)
+
 
 def set_next_episode(update: telegram.Update, context: telegram.ext.CallbackContext):
     episode_date_str = update.message.text

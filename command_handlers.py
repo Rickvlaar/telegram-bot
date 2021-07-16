@@ -57,6 +57,7 @@ def pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
     session = db_session()
     item_list = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()
     pleepapier_string = 'Pleepapier:\n'
+    pleepapier_string += 'Volgende opname is op ' + item_list[0].list_items.episode_date.strftime('%d-%m-%Y')
     items = [str(index + 1) + '. ' + item.item_name + ' (' + item.created_by + ')\n' for index, item in
              enumerate(item_list)]
     pleepapier_string = pleepapier_string + ''.join(items)

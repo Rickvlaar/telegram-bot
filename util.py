@@ -53,7 +53,7 @@ class Command:
 
     class Argument:
 
-        def __init__(self, argument: str, value: str):
+        def __init__(self, argument: str, value: str) -> None:
             self.argument = argument
             self.value = value
 

@@ -61,7 +61,7 @@ def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
         if len(value) > 140:
             context.bot.send_message(chat_id=update.effective_chat.id, text='Jezus lulijzer, hier gelden gewoon twitter regels: max 140 tekens')
             return
-        item = Insult(insult=command, created_by=update.effective_user.first_name)
+        item = Insult(insult=value, created_by=update.effective_user.first_name)
         items.append(item)
     upsert_records(items)
     added_message = 'Goede! Staat erin'

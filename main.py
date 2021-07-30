@@ -37,6 +37,7 @@ def ready_hhpc_bot() -> Bot:
 
     insultees = [member.strip() for member in Config.MEMBERS.split(',')]
     for name in insultees:
+        logging.log(logging.ERROR, name)
         updater.dispatcher.add_handler(CommandHandler(command=name, callback=command_handlers.send_insult))
 
     updater.dispatcher.add_handler(CommandHandler(command='insult', callback=command_handlers.insult))

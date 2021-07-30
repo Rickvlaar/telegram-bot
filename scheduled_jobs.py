@@ -11,7 +11,7 @@ async def get_expired_bets(bot: Bot):
         kratjes = session.query(Kratjes).order_by(Kratjes.created_date).all()
         message_text = 'De volgende kratjes zijn verschuldigd! \n\n'
         for bet in kratjes:
-            if bet.due_date < datetime.now():
+            if bet.due_date and bet.due_date < datetime.now():
                 message_text += f'{bet.better} stelt: '
                 bet.due_date = bet.due_date.strftime('%d-%m-%Y') if bet.due_date else 'het einde van dit leven'
                 message_text += '"{1}" voor "{2}" met "{0}" als onderpand\n\n'.format(

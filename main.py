@@ -60,7 +60,7 @@ def ready_hhpc_bot() -> Bot:
 def ready_bots():
     poepbot = ready_poepbot()
     hhpc_bot = ready_hhpc_bot()
-    asyncio.run(get_expired_bets(hhpc_bot))
+    # asyncio.run(get_expired_bets(hhpc_bot))
 
 
 ready_bots()

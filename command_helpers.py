@@ -11,6 +11,7 @@ def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
         list_name = 'Reservelijst'
     items = []
     for command in command.value_list:
+        command = command.replace('-r ', '')
         item = Item(item_name=command, item_list=list_name, created_by=update.effective_user.first_name)
         items.append(item)
         input_received_message = '"' + command + '"' + ' staat erop!'

@@ -20,8 +20,8 @@ class Command:
 
     # The regular expressions separate the argument and its values
     def get_arguments(self) -> None:
-        word_arg_regex = '((?<=[-]{2})\\w*)(.+?(?:(?=(\\s-)|[\\n\\r])|$))'
-        letter_arg_regex = '((?<=-{1})\\w{1}(?![\\w]))(.+?(?:(?=(\\s-)|[\\n\\r])|$))'
+        word_arg_regex = '((?<=[-]{2})\\w*)(.*?(?:(?=(\\s-)|[\\n\\r])|$))'
+        letter_arg_regex = '((?<=-{1})\\w{1}(?![\\w]))(.*?(?:(?=(\\s-)|[\\n\\r])|$))'
 
         match_set = set(re.findall(pattern=word_arg_regex, string=self.command_string))
         match_set |= set(re.findall(pattern=letter_arg_regex, string=self.command_string))
@@ -38,7 +38,7 @@ class Command:
         value = match[1].strip()
         self.command = command
         self.value = value
-        self.value_list = value.split(',').strip() if ',' in value else [value]
+        self.value_list = [sub_value.strip() for sub_value in value.split(',')] if ',' in value else [value]
 
     def has_args(self) -> bool:
         return len(self.arguments) > 0

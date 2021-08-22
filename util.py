@@ -4,7 +4,8 @@ from data_model import Base, engine, db_session, Insult
 from sqlalchemy.sql.functions import random
 
 
-# FIXME: multi-word commands should be in quotes (")
+# FIXME: multi-word command values should be in quotes (")
+# FIXME: keyword only arguments fail
 # TODO: get command-value in more reliable manner
 class Command:
 

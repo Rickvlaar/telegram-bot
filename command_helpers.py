@@ -7,7 +7,7 @@ from datetime import datetime
 def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
     command = process_input(update.message.text)
     list_name = 'Pleepapier'
-    if '--reserve' in command.arguments or '-r' in command.arguments:
+    if 'reserve' in command.arguments or 'r' in command.arguments:
         list_name = 'Reservelijst'
     items = []
     for command in command.value_list:
@@ -21,7 +21,7 @@ def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
 def remove_item(update: telegram.Update, context: telegram.ext.CallbackContext):
     command = process_input(update.message.text)
     list_name = 'Pleepapier'
-    if '--reserve' in command.arguments or '-r' in command.arguments:
+    if 'reserve' in command.arguments or 'r' in command.arguments:
         list_name = 'Reservelijst'
     items = []
     for value in command.value_list:
@@ -37,7 +37,7 @@ def remove_item(update: telegram.Update, context: telegram.ext.CallbackContext):
 def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
     command = process_input(update.message.text)
     list_name = 'Pleepapier'
-    if '--reserve' in command.arguments or '-r' in command.arguments:
+    if 'reserve' in command.arguments or 'r' in command.arguments:
         list_name = 'Reservelijst'
     items = []
     for value in command.value_list:

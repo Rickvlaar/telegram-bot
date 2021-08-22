@@ -26,6 +26,7 @@ def remove_item(update: telegram.Update, context: telegram.ext.CallbackContext):
         list_name = 'Reservelijst'
     items = []
     for value in command.value_list:
+        value = value.replace('-r ', '')
         item = query_list_item(command=value, list_name=list_name)
         if not item:
             raise ValueError

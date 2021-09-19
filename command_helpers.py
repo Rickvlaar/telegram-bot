@@ -67,6 +67,8 @@ def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 def change_item_position(command: Command):
     list_name = 'Pleepapier'
+    if 'reserve' in command.arguments or 'r' in command.arguments:
+        list_name = 'Reservelijst'
     item_list = get_item_list_by_name(list_name=list_name)
     item_position_dict = {item.item_list_position: item for item in item_list.items}
     moved_item_index = int(command.value)

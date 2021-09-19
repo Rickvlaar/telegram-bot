@@ -166,7 +166,6 @@ def get_item_list_by_name(list_name: str) -> ItemList:
 def fix_item_postions(item_list: ItemList) -> ItemList:
     # Items are ordered in the query, so just enumerate all the items and add position
     for index, item in enumerate(item_list.items, 1):
-        if item.item_list_position is None:
-            item.item_list_position = index
+        item.item_list_position = index
     upsert_records([item_list])
     return item_list

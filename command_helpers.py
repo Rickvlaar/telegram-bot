@@ -1,7 +1,18 @@
 import telegram.ext
-from util import upsert_records, process_input, delete_records
+from util import upsert_records, process_input, delete_records, Command
 from data_model import Item, Insult, Kratjes, ItemList, db_session
 from datetime import datetime
+
+
+def get_pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
+    pleepapier = get_item_list_by_name(list_name='Pleepapier')
+    pleepapier = fix_item_postions(item_list=pleepapier)
+    pleepapier_string = 'Pleepapier:\n'
+    if pleepapier.episode_date:
+        pleepapier_string += 'Volgende opname is op ' + pleepapier.list_items.episode_date.strftime('%d-%m-%Y')
+    items = [f'{item.item_list_position}. {item.item_name} ({item.created_by})\n' for item in pleepapier.items]
+    pleepapier_string = pleepapier_string + ''.join(items)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=pleepapier_string)
 
 
 def add_item(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -54,6 +65,22 @@ def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
     upsert_records(items)
 
 
+def change_item_position(command: Command):
+    list_name = 'Pleepapier'
+    item_list = get_item_list_by_name(list_name=list_name)
+    item_position_dict = {item.item_list_position: item for item in item_list.items}
+    moved_item_index = int(command.value)
+    new_item_index = int(command.arguments.get('t').value)
+    if new_item_index is None:
+        new_item_index = command.arguments.get('target')
+    moved_item = item_position_dict.get(moved_item_index)
+    moved_item.item_list_position = new_item_index
+    for index, item in item_position_dict.items():
+        if index < moved_item_index:
+            item.item_list_position += 1
+    upsert_records(item_list.items)
+
+
 def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
     command = process_input(update.message.text)
     items = []
@@ -62,7 +89,8 @@ def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
         return
     for value in command.value_list:
         if len(value) > 140:
-            context.bot.send_message(chat_id=update.effective_chat.id, text='Jezus lulijzer, hier gelden gewoon twitter regels: max 140 tekens')
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text='Jezus lulijzer, hier gelden gewoon twitter regels: max 140 tekens')
             return
         item = Insult(insult=value, created_by=update.effective_user.first_name)
         items.append(item)
@@ -124,3 +152,21 @@ def query_list_item(command: str, list_name: str) -> Item:
         item = session.query(Item).filter(Item.item_list == list_name, Item.item_name == command).first()
     session.close()
     return item
+
+
+def get_item_list_by_name(list_name: str) -> ItemList:
+    session = db_session()
+    item_list = session.query(ItemList) \
+        .filter(ItemList.list_name == list_name) \
+        .first()
+    session.close()
+    return item_list
+
+
+def fix_item_postions(item_list: ItemList) -> ItemList:
+    # Items are ordered in the query, so just enumerate all the items and add position
+    for index, item in enumerate(item_list.items, 1):
+        if item.item_list_position is None:
+            item.item_list_position = index
+    upsert_records([item_list])
+    return item_list

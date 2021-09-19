@@ -98,7 +98,7 @@ def create_data_model():
 
 
 # Drop all tables if you want to rebuild the data-model
-def drop_all_tables(confirmed):
+def drop_all_tables(confirmed: bool):
     if confirmed:
         Base.metadata.drop_all(bind=engine)
 

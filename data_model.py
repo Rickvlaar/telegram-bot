@@ -15,13 +15,13 @@ class ItemList(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     list_name = Column(String, index=True, unique=True)
-    items = relationship('Item', backref='list_items', lazy=True)
+    items = relationship('Item', backref='list_items', lazy='joined', order_by='Item.item_list_position')
     episode_date = Column(DateTime)
     created_by = Column(String)
     created_date = Column(DateTime, default=datetime.utcnow())
 
     def __repr__(self):
-        return self.attributes()
+        return self.__str__()
 
     def __str__(self):
         return str(self.attributes())
@@ -36,11 +36,12 @@ class Item(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     item_list = Column(String, ForeignKey(ItemList.list_name))
     item_name = Column(String, index=True, unique=True)
+    item_list_position = Column(Integer)
     created_by = Column(String)
     created_date = Column(DateTime, default=datetime.utcnow())
 
     def __repr__(self):
-        return self.attributes()
+        return self.__str__()
 
     def __str__(self):
         return str(self.attributes())
@@ -58,7 +59,7 @@ class Insult(Base):
     created_date = Column(DateTime, default=datetime.utcnow())
 
     def __repr__(self):
-        return self.attributes()
+        return self.__str__()
 
     def __str__(self):
         return str(self.attributes())
@@ -79,7 +80,7 @@ class Kratjes(Base):
     created_date = Column(DateTime, default=datetime.utcnow())
 
     def __repr__(self):
-        return self.attributes()
+        return self.__str__()
 
     def __str__(self):
         return str(self.attributes())

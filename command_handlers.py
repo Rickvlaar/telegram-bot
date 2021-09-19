@@ -2,7 +2,7 @@ import telegram.ext
 import logging
 from telegram import ForceReply
 from util import process_input, get_random_insult, get_insultee_name
-from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet
+from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet, change_item_position, get_pleepapier
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session
 
@@ -53,17 +53,7 @@ def new(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 
 def pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name = 'Pleepapier'
-    session = db_session()
-    item_list = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()
-    pleepapier_string = 'Pleepapier:\n'
-    if item_list[0].list_items.episode_date:
-        pleepapier_string += 'Volgende opname is op ' + item_list[0].list_items.episode_date.strftime('%d-%m-%Y')
-    items = [str(index + 1) + '. ' + item.item_name + ' (' + item.created_by + ')\n' for index, item in
-             enumerate(item_list)]
-    pleepapier_string = pleepapier_string + ''.join(items)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=pleepapier_string)
-    session.close()
+    get_pleepapier(update=update, context=context)
 
 
 def reservelijst(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -142,6 +132,16 @@ def volgende(update: telegram.Update, context: telegram.ext.CallbackContext):
         pass
 
 
+def pos(update: telegram.Update, context: telegram.ext.CallbackContext):
+    try:
+        command = process_input(update.message.text)
+        change_item_position(command=command)
+        get_pleepapier(update=update, context=context)
+    except ValueError as e:
+        logging.exception(e)
+        pass
+
+
 def request_missing_input(update: telegram.Update, context: telegram.ext.CallbackContext, conversation_state: int):
     no_input_message = 'Wat dan lullo?'
     context.bot.send_message(chat_id=update.effective_chat.id,
@@ -162,6 +162,7 @@ function_description_dict = {
         'add':          'Voeg item toe aan pleepapier, -r --reserve voegt toe aan reservelijst',
         'rm':           'Verwijder item van pleepapier, -r --reserve verwijdert van reservelijst',
         'move':         'Verplaats item naar reservelijst, -r --reserve haalt item van reservelijst',
+        'pos':          'Verander onderwerp positie, -t --target om nieuwe positie aan te geven',
         'new':          'Maak een nieuw papiertje aan',
         'insult':       'Voeg een nieuwe belediging toe aan de database',
         'adjekratje':   'Voeg weddenschap toe, -s --stake "inzet", -b --better "de wedder", -d --date "tot wanneer in yyyy-mm-dd" ' \
@@ -183,6 +184,7 @@ input_handlers = [
         rm,
         move,
         new,
+        pos,
         insult,
         volgende
 ]

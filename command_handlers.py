@@ -2,7 +2,8 @@ import telegram.ext
 import logging
 from telegram import ForceReply
 from util import process_input, get_random_insult, get_insultee_name
-from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet, change_item_position, get_pleepapier
+from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet, \
+    change_item_position, get_pleepapier, get_item_list_by_name, fix_item_postions
 from conversation_handlers import ConversationStates
 from data_model import ItemList, Item, db_session
 
@@ -57,15 +58,18 @@ def pleepapier(update: telegram.Update, context: telegram.ext.CallbackContext):
 
 
 def reservelijst(update: telegram.Update, context: telegram.ext.CallbackContext):
-    list_name = 'Reservelijst'
-    session = db_session()
-    item_list = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()
-    reservelijst_string = 'Reservelijst:\n'
-    items = [str(index + 1) + '. ' + item.item_name + ' (' + item.created_by + ')\n' for index, item in
-             enumerate(item_list)]
-    reservelijst_string = reservelijst_string + ''.join(items)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=reservelijst_string)
-    session.close()
+    try:
+        reserve_list = get_item_list_by_name('Reservelijst')
+        reserve_list = fix_item_postions(reserve_list)
+
+        reservelijst_string = 'Reservelijst:\n'
+        items = [f'{item.item_list_position}. {item.item_name} ({item.created_by})\n' for item in reserve_list.items]
+        reservelijst_string = reservelijst_string + ''.join(items)
+
+        context.bot.send_message(chat_id=update.effective_chat.id, text=reservelijst_string)
+    except ValueError as e:
+        logging.exception(e)
+        pass
 
 
 def add(update: telegram.Update, context: telegram.ext.CallbackContext):

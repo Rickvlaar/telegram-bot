@@ -72,14 +72,16 @@ def change_item_position(command: Command):
     item_list = get_item_list_by_name(list_name=list_name)
     item_position_dict = {item.item_list_position: item for item in item_list.items}
     moved_item_index = int(command.value)
-    new_item_index = int(command.arguments.get('t').value)
-    if new_item_index is None:
-        new_item_index = command.arguments.get('target')
+    target_item_index = int(command.arguments.get('t').value)
+    if target_item_index is None:
+        target_item_index = command.arguments.get('target')
     moved_item = item_position_dict.get(moved_item_index)
-    moved_item.item_list_position = new_item_index
+    moved_item.item_list_position = target_item_index
     for index, item in item_position_dict.items():
-        if index < moved_item_index:
+        if target_item_index < moved_item_index and moved_item_index > index >= target_item_index:
             item.item_list_position += 1
+        elif target_item_index > moved_item_index and moved_item_index < index <= target_item_index:
+            item.item_list_position -= 1
     upsert_records(item_list.items)
 
 

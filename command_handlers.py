@@ -5,7 +5,7 @@ from util import process_input, get_random_insult, get_insultee_name
 from command_helpers import add_item, move_item, remove_item, add_insult, get_kratjes, set_next_episode, add_bet, \
     change_item_position, get_pleepapier, get_item_list_by_name, fix_item_postions
 from conversation_handlers import ConversationStates
-from data_model import ItemList, Item, db_session
+from data_model import ItemList, db_session
 
 
 def send_insult(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -140,6 +140,7 @@ def pos(update: telegram.Update, context: telegram.ext.CallbackContext):
     try:
         command = process_input(update.message.text)
         change_item_position(command=command)
+        # FIXME: pleepapier is always returned even when reservelijst is updated
         get_pleepapier(update=update, context=context)
     except ValueError as e:
         logging.exception(e)

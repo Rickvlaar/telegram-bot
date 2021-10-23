@@ -92,7 +92,7 @@ def position_all_items(command: Command, item_list: ItemList):
 
     item_position_dict = {item.item_list_position: item for item in item_list.items}
     for index, current_item_pos in enumerate(order_str, 1):
-        item = item_position_dict.get(current_item_pos)
+        item = item_position_dict.get(int(current_item_pos))
         item.item_list_position = index
 
     return item_list
@@ -100,7 +100,7 @@ def position_all_items(command: Command, item_list: ItemList):
 
 def position_single_item(command: Command, item_list: ItemList):
     moved_item_index = int(command.value)
-    target_item_index = command.get_argument(letter_arg='t', word_arg='target').value
+    target_item_index = int(command.get_argument(letter_arg='t', word_arg='target').value)
 
     item_position_dict = {item.item_list_position: item for item in item_list.items}
     moved_item = item_position_dict.get(moved_item_index)

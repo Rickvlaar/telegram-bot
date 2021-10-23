@@ -45,6 +45,8 @@ def remove_item(update: telegram.Update, context: telegram.ext.CallbackContext):
         removed_message = '"' + item.item_name + '" is eraf!'
         context.bot.send_message(chat_id=update.effective_chat.id, text=removed_message)
     delete_records(items)
+    item_list = get_item_list_by_name(list_name=list_name)
+    fix_item_postions(item_list=item_list)
 
 
 def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
@@ -63,6 +65,8 @@ def move_item(update: telegram.Update, context: telegram.ext.CallbackContext):
         moved_message = '"' + item.item_name + '" staat nu op ' + item.item_list
         context.bot.send_message(chat_id=update.effective_chat.id, text=moved_message)
     upsert_records(items)
+    item_list = get_item_list_by_name(list_name=list_name)
+    fix_item_postions(item_list=item_list)
 
 
 def change_item_position(command: Command):
@@ -70,19 +74,45 @@ def change_item_position(command: Command):
     if 'reserve' in command.arguments or 'r' in command.arguments:
         list_name = 'Reservelijst'
     item_list = get_item_list_by_name(list_name=list_name)
+
+    if 't' in command.arguments or 'target' in command.arguments:
+        item_list = position_single_item(command=command, item_list=item_list)
+    elif 'a' in command.arguments or 'all' in command.arguments:
+        item_list = position_all_items(command=command, item_list=item_list)
+
+    upsert_records(item_list.items)
+
+
+def position_all_items(command: Command, item_list: ItemList):
+    order_argument = command.get_argument(letter_arg='a', word_arg='all')
+    order_str = order_argument.value
+
+    if len(order_str) < len(item_list.items) or len(order_str) > 10:
+        raise ValueError
+
     item_position_dict = {item.item_list_position: item for item in item_list.items}
+    for index, current_item_pos in enumerate(order_str, 1):
+        item = item_position_dict.get(current_item_pos)
+        item.item_list_position = index
+
+    return item_list
+
+
+def position_single_item(command: Command, item_list: ItemList):
     moved_item_index = int(command.value)
-    target_item_index = int(command.arguments.get('t').value)
-    if target_item_index is None:
-        target_item_index = command.arguments.get('target')
+    target_item_index = command.get_argument(letter_arg='t', word_arg='target').value
+
+    item_position_dict = {item.item_list_position: item for item in item_list.items}
     moved_item = item_position_dict.get(moved_item_index)
     moved_item.item_list_position = target_item_index
+
     for index, item in item_position_dict.items():
         if target_item_index < moved_item_index and moved_item_index > index >= target_item_index:
             item.item_list_position += 1
         elif target_item_index > moved_item_index and moved_item_index < index <= target_item_index:
             item.item_list_position -= 1
-    upsert_records(item_list.items)
+
+    return item_list
 
 
 def add_insult(update: telegram.Update, context: telegram.ext.CallbackContext):

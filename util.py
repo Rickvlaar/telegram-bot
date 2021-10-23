@@ -43,8 +43,14 @@ class Command:
     def has_args(self) -> bool:
         return len(self.arguments) > 0
 
+    def get_argument(self, letter_arg: str, word_arg: str):
+        argument = self.arguments.get(letter_arg)
+        if argument is None:
+            argument = self.arguments.get(word_arg)
+        return argument
+
     def __repr__(self):
-        return self.attributes()
+        return str(self.attributes())
 
     def __str__(self):
         return str(self.attributes())
@@ -55,11 +61,11 @@ class Command:
     class Argument:
 
         def __init__(self, argument: str, value: str) -> None:
-            self.argument = argument
-            self.value = value
+            self.argument: str = argument
+            self.value: str = value
 
         def __repr__(self):
-            return self.attributes()
+            return str(self.attributes())
 
         def __str__(self):
             return str(self.attributes())

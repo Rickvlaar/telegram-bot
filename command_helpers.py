@@ -87,7 +87,7 @@ def position_all_items(command: Command, item_list: ItemList):
     order_argument = command.get_argument(letter_arg='a', word_arg='all')
     order_str = order_argument.value
 
-    if len(order_str) < len(item_list.items) or len(order_str) > 10:
+    if len(order_str) < len(item_list.items) or len(order_str) > 9:
         raise ValueError
 
     item_position_dict = {item.item_list_position: item for item in item_list.items}

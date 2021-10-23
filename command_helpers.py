@@ -150,8 +150,8 @@ def query_list_item(command: str, list_name: str) -> Item:
     list_name = list_name
     session = db_session()
     if command.isdigit():
-        item_index = int(command) - 1
-        item = session.query(Item).filter(Item.item_list == list_name).order_by(Item.id).all()[item_index]
+        item_index = int(command)
+        item = session.query(Item).filter(Item.item_list == list_name, Item.item_list_position == item_index).first()
     else:
         item = session.query(Item).filter(Item.item_list == list_name, Item.item_name == command).first()
     session.close()
